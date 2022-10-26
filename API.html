@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+        crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="u1.css">
+    <title>API fetch</title>
+</head>
+
+<body>
+    <div id="container">
+
+        <div class="input-section">
+            <!-- <button type="button" class="show-btn btn btn-sm" onclick="render()"> Show</button> -->
+            <button type="button" class="show-btn btn btn-sm " onclick="add_user()">Add</button>
+            <!-- <button type="button" class="show-btn btn btn-sm " onclick="fetchurl()">Fetch</button> -->
+            <div class="input-group">
+                <input type="text" class="form-control" id="search_input" placeholder="Search By name"
+                    onkeyup="Search()"></input>
+                <div class="input-group-append" onclick="Search()">
+                    <button class="btn btn-secondary" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                            class="bi bi-search" viewBox="0 0 18 18">
+                            <path
+                                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+
+                        </svg>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+        <div class="popup">
+
+            <div class="content">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-x-circle close" onclick="Close_msg()" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                    <path
+                        d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                </svg>
+                <div class="top-content">Add new User</div>
+                <div class="adding_newuser">
+                    <p id="alert_msg"></p>
+                    <input type="text" id="new_name" placeholder="name" required></input>
+                    <input type="text" id="new_Username" placeholder="username" required></input>
+                    <input type="email" id="new_email" placeholder="email" required></input>
+                    <button type="submit" class="button btn-lg " onclick="crt_btn()">Create</button>
+
+                </div>
+
+            </div>
+        </div>
+
+
+
+
+    </div>
+    <div class="final-result">
+        <div id="result-area">
+        </div>
+
+        <div id="searched-area1">
+        </div>
+
+
+        <div id="details">
+            <div id="part1"></div>
+             <h4>Albums</h4>
+             <div id="part2"></div>
+        </div>
+        <div id="details_photo">
+        <div style="display: flex; background-color: aqua;">
+            <div id="part4"></div>
+            <div><h4 style="align-items: flex-end; padding-top:2px ; margin-left: 35rem;">Photos</h4></div>
+        </div>
+            <div id="part3"></div>
+        </div>
+        
+    </div>
+
+</body>
+<script>
+
+
+    let sw = '';
+    let value = ' ';
+
+
+    const url1 = "https://jsonplaceholder.typicode.com/albums";
+    fetch(url1).then((r2) => r2.json()).then((data4) => {
+
+
+        localStorage.setItem("album", JSON.stringify(data4))
+
+
+    })
+
+
+    const url2 = "https://jsonplaceholder.typicode.com/photos";
+    fetch(url2).then((r3) => r3.json()).then((data5) => {
+
+
+        localStorage.setItem("photos", JSON.stringify(data5))
+
+
+    })
+
+    
+
+
+    const url = "https://jsonplaceholder.typicode.com/users";
+    fetch(url).then((r1) => r1.json()).then((data) => {
+
+        // const name = JSON.parse(localStorage.getItem('mydata'));
+        // console.log(name.length)
+        // if (!name || name.length == 0) {
+        // console.log('no data');
+        localStorage.setItem("mydata", JSON.stringify(data))
+        render();
+        // }
+        // else {
+        // console.log('data exist');
+        // }
+
+    })
+
+
+
+
+    function render() {
+        document.getElementById("container").style.display = "block";
+        document.getElementById("result-area").style.display = "flex";
+        document.getElementById("details").style.display = "none";
+        document.getElementById("searched-area1").style.display = "none";
+        document.getElementById("details_photo").style.display = "none";
+        // console.log("sawan")
+        let sw = " "
+        
+        data = JSON.parse(localStorage.getItem("mydata"));
+        // console.log(data)
+
+        // console.log(data[0].name)
+        for (let i = 0; i < data.length; i++) {
+            // console.log(data);
+            // console.log(data[i].name)
+
+
+            sw += `<div class="col-sm-3 m-1" >
+                    <div class="card sm-3 h-4" >
+                    <div class="card " onclick="next_show(${data[i].id})"> 
+                        
+                        <img src="ph1.png" class="card-img-top w-25 h-auto rounded mx-auto d-block" alt="no_image">
+                        <div class="shadow  bg-white rounded card-body "style:"padding="2px 2px 5px 5px" >
+                            <div><p class="card-title m-0"><b>Name</b> - ${data[i].name}</p></div>
+                            <div><p class="card-text"> <b>Username</b> - ${data[i].username}</p></div>
+                            <div><p class="card-text"> <b>Email</b> - ${data[i].email}</p></div>
+                        </div>
+                    </div>
+                            <input type="button" class="btn btn-success m-1" value="Edit" onclick="edit(${i})"></input>
+                            <input type="button" class="btn btn-warning m-1" value="Delete" onclick="del(${i})"></input>
+                    </div>
+                </div>`
+
+        }
+        document.getElementById("result-area").innerHTML = sw;
+    }
+
+    function del(Id) {
+        // console.log(Id)
+        // console.log(localStorage.getItem("mydata"));
+        data1 = JSON.parse(localStorage.getItem("mydata"));
+        // console.log(data1[Id-1]);
+        let var1 = []
+        data1.map((ele, index) => {
+            if (Id !== index) {
+                var1.push(ele)
+            }
+
+            // console.log(ele)
+            // console.log(index)
+        })
+        localStorage.setItem("mydata", JSON.stringify(var1))
+        sw = ""
+        render();
+
+    }
+
+    function edit(Id1) {
+        // // add_user();
+        // // console.log(Id1)
+        // data1 = JSON.parse(localStorage.getItem("mydata"));
+        // console.log(data1[Id1])
+
+    }
+
+    function add_user() {
+        // console.log("selected")
+        document.getElementById("result-area").style.display = "none";
+        document.getElementById("searched-area1").style.display = "none";
+        document.querySelector(".popup").style.display = "flex";
+    }
+
+    document.querySelector(".close").addEventListener("click", function () {
+        document.querySelector(".popup").style.display = "none";
+    })
+
+    function crt_btn() {
+
+        // console.log(data1)
+
+        var Name = document.getElementById("new_name").value;
+
+        var Username = document.getElementById("new_Username").value;
+        var Email = document.getElementById("new_email").value;
+        // p="sawan"
+        // document.getElementById("alert_msg").innerHTML=p
+        // console.log(new_name)
+        // console.log(new_Username)
+        // console.log(new_email)
+
+        // console.log(arr2)
+        // arr2.push(new_name,new_Username,new_email)
+        // let v= JSON.stringify({name,Username,email})
+        // console.log(v)
+
+        if (Name == '' || Username == '' || Email == '' || Name == null || Username == null || Email == null) {
+            document.getElementById("alert_msg").innerHTML = "*fields can not be empty*"
+            // console.log("sawan")
+        }
+
+
+        else {
+            document.querySelector(".popup").style.display = "none";
+            data1 = JSON.parse(localStorage.getItem("mydata"));
+            data1.push({ "id": data1.length + 1, "name": Name, "username": Username, "email": Email })
+            // console.log(data1)
+            // console.log(data1.length)
+            localStorage.setItem("mydata", JSON.stringify(data1))
+            // console.log(arr2)
+            // localStorage.setItem("mydata", JSON.stringify(arr2))
+            sw = " "
+            render();
+        }
+    }
+    function Search() {
+        data1 = JSON.parse(localStorage.getItem("mydata"));
+        // console.log(data1)
+
+        let search = document.getElementById("search_input").value.toUpperCase();
+        console.log(search)
+        
+
+
+        if (search == ' ') {
+            console.log.clear();
+            console.log("enter the data")
+        }
+        else {
+
+            const match = data1.filter(element => {
+                if (element.name.toString().toUpperCase().includes(search)) {
+                    return element;
+                }
+            });
+            console.log(match);
+            // console.log(match);
+            Display(match);
+            // console.log("match data",match);
+            // display();
+        }
+
+        // localStorage.setItem("searched_data", JSON.stringify(v2))
+        // Display();
+
+
+        // for(let i=0;i<data1.length;i++)
+        // {
+        //     if(data1[i].name.toUpperCase()==search)
+        //     {
+        //         console.log(data[i].id)
+        //         console.log(data[i].name)
+        //         console.log(data[i].username)
+        //         console.log(data[i].email)
+
+        //         sw=" "
+
+        //     }
+        // }
+
+
+        // only store the recent search result in localStorage
+        // console.log(search);
+        //  let newdata = data2.indexOf(search,0)
+        //  console.log(newdata)
+
+        // let var2 = []
+        // data1.map((ele, index) => {
+        //     if (search == index+1) {
+        //         var2.push(ele)
+        //     }
+        // })
+        // console.log(var2)
+        // localStorage.setItem("mydata", JSON.stringify(var2))
+        // sw = ""
+
+        // render();
+    }
+
+    function Display(match) {
+      // console.log(ele)
+        document.getElementById("result-area").style.display = "none";
+        document.getElementById("searched-area1").style.display = "flex";
+
+
+        let tw = " "
+        
+        
+
+        for (let i = 0; i < match.length; i++) {
+            // console.log(match[i].name);
+            tw += `<div class="col-sm-3 m-2">
+                    <div class=" card sm-2 w-75">
+                        <img src="ph1.png" class="card-img-top w-50 h-auto rounded mx-auto d-block" alt="no_image">
+                        <div class="shadow p-2 mb-2 bg-white rounded card-body fs-6 h-5">
+                            <div><p class="card-title"><b>Name</b> - ${match[i].name}</p></div>
+                            <div><p class="card-text"> <b>Username</b> - ${match[i].username}</p></div>
+                            <div><p class="card-text"> <b>Email</b> - ${match[i].email}</p></div>
+                        </div>
+                            <input type="button" class="btn btn-success m-2" value="Edit" onclick="edit(${i})"></input>
+                            <input type="button" class="btn btn-warning m-2" value="Delete" onclick="del(${i})"></input>
+                    </div>
+                </div>`
+        }
+        document.getElementById("searched-area1").innerHTML = tw
+    }
+
+
+
+    // 
+    function Close_msg() {
+        document.getElementById("alert_msg").innerHTML = " ";
+
+    }
+
+    function next_show(i) {
+        
+        localStorage.setItem("ID", JSON.stringify(i));
+        sw1 = " "
+        sw2 = " "
+        // console.log(i);
+        // document.getElementsByClassName("input-section").style.visiblity="hidden";
+        document.getElementById("details_photo").style.display = "none";
+        document.getElementById("container").style.display = "none";
+        document.getElementById("result-area").style.display = "none";
+        document.getElementById("details").style.display = "block";
+        data1 = JSON.parse(localStorage.getItem("mydata"));
+        data4 = JSON.parse(localStorage.getItem("album"));
+
+        // console.log(data4.length)
+        // console.log(data4)
+        // console.log(data1.length)
+
+
+
+        // console.log(data1[i-1].name)
+        // console.log(data1[i].id)
+        // console.log(data1[0].id)
+        for (let j = 0; j < data1.length; j++) {
+            if (i == data1[j].id) {
+                
+
+                // var add = JSON.stringify(data1[j].address)
+                // console.log(data1[j].address.street);
+                // var company = JSON.stringify(data1[j].company)
+                //  var album1=JSON.stringify(data4[j])
+                // //  console.log(album1)
+
+
+                sw1 = `
+                <div>
+                    <div class="text-center"><h2>USER-DETAILS</h2></div>
+                </div>
+                <div class="d-flex">
+                    <div class="col-sm-3 m-3" >
+                        <div class="card" style="width: 18rem; height:auto">
+                        
+                        
+                            <img src="ph1.png" class="card-img-top rounded mx-auto d-block" alt="no_image">
+                            <div class="shadow  mb-1 bg-white rounded card-body">
+                                <div><p class="card-title m-0"><b>Name</b> - ${data1[j].name}</p></div>
+                                <div><p class="card-text"> <b>Username</b> - ${data1[j].username}</p></div>
+                                <div><p class="card-text"> <b>Email</b> - ${data1[j].email}</p></div>
+                            </div>
+                            <input type="button" class="btn btn-success m-2" value="Back" onclick="render()"></input>
+                          
+                        </div>
+                    
+                    </div>
+                        <div class="shadow  col-sm-6 m-2 py-6 px-2 bg-white " style="width:25rem">
+                            <div><p class="card-title px-2 pt-4"><b>Id</b> - ${data1[j].id}</p></div>
+                            <div><p class="card-title px-2"><b>Name</b> - ${data1[j].name}</p></div>
+                            <div><p class="card-text px-2"> <b>Username</b> - ${data1[j].username}</p></div>
+                            <div><p class="card-text px-2"> <b>Email</b> - ${data1[j].email}</p></div>
+                            <div><p class="card-title px-2 pd-2"><b><u>Address</u></b> - </p>
+                                <div><p class="card-title px-4"><b>Street</b> - ${data1[j].address.street}</p></div>
+                                <div><p class="card-title px-4"><b>Suite</b> - ${data1[j].address.suite}</p></div>
+                                <div><p class="card-title px-4"><b>City</b> - ${data1[j].address.city}</p></div>
+                                <div><p class="card-title px-4"><b>Zipcode</b> - ${data1[j].address.zipcode}</p></div>
+                            </div>
+                                <div><p class="card-title px-2 pd-2"><b><u>Company</u></b> - </p>
+                                    <div><p class="card-title px-4"><b>Name</b> - ${data1[j].company.name}</p></div>
+                                    <div><p class="card-title px-4"><b>CatchPhrase</b> - ${data1[j].company.catchPhrase}</p></div>
+                                    <div><p class="card-title px-4"><b>BS</b> - ${data1[j].company.bs}</p></div>
+                                </div>
+
+                        </div>
+                    </div>`
+
+            // console.log(data4[1].userId)
+                
+                //  console.log(data4[3].albumId)
+                for(let k=0;k<data4.length;k++){
+                    if(data4[k].userId==i)
+                    {
+                    sw2=sw2+
+                    `<div class="col-sm-3 m-1" >
+                    <div class="card sm-3 h-4 w-75" >
+                    <div class="card " onclick="nextshow_photo(${data4[k].userId})"> 
+                        
+                        <img src="album.png" class="card-img-top w-25 h-5  rounded mx-auto d-block" alt="no_image">
+                        <div class="shadow  bg-white rounded card-body "style:"padding="2px 2px 5px 5px" ">
+                            
+                            <div><p class="card-text" style="height:4.5rem"> <b>Title</b> - ${data4[k].title}</p></div>
+                        </div>
+                    </div>
+                            <input type="button" class="btn btn-warning m-1" value="Delete" onclick="del1(${k})"></input>
+                    </div>
+                </div>`
+                    }
+                }
+            }
+        }
+        // console.log("edited")
+        document.getElementById("part1").innerHTML = sw1;
+        document.getElementById("part2").innerHTML = sw2;
+    }
+
+    function del1(i)
+    {
+        data4 = JSON.parse(localStorage.getItem("ID"));
+        
+        // console.log(i)
+        document.getElementById("details").style.display = "block";
+        data1 = JSON.parse(localStorage.getItem("album"));
+        // console.log(data1)
+
+
+        let var1 = []
+        data1.map((ele, index) => {
+            if (i !== index) {
+                var1.push(ele)
+            }
+
+            // console.log(ele)
+            // console.log(index)
+        })
+        console.log(var1)
+        localStorage.setItem("album", JSON.stringify(var1));
+
+        next_show(data4);
+        
+
+    }
+    function nextshow_photo(i)
+    {
+        console.log(i)
+        localStorage.setItem("ID-photo", JSON.stringify(i));
+        // console.log(i);
+        sw3 = " "
+        sw4 = " "
+        document.getElementById("container").style.display = "none";
+        document.getElementById("result-area").style.display = "none";
+        document.getElementById("details").style.display = "none";
+        document.getElementById("details_photo").style.display = "block";
+        data6 = JSON.parse(localStorage.getItem("photos"));
+        // console.log(data4)
+        // console.log(data6.length)
+        // console.log(data6[2].albumId)
+        // console.log(i)
+        sw4=`<input type="button" class="btn btn-success m-1" value="Back" onclick="next_show(${i})"></input>`
+        for(let j=0;j<data6.length;j++)
+        {
+            if(data6[j].albumId == i)
+            {
+        sw3=sw3+`<div class="col-sm-3 m-1" >      
+                    <div class="card sm-3 h-4" >
+                    <div class="card">        
+                        <img src="${data6[j].url}" class="card-img-top w-25 h-auto rounded mx-auto d-block" alt="no_image">
+                        <div class="shadow  bg-white rounded card-body "style:"padding="2px 2px 5px 5px" >
+                            <div><p class="card-title m-0"><b>AlbumId</b> - ${data6[j].albumId}</p></div>
+                            <div><p class="card-text"> <b>Id</b> - ${data6[j].id}</p></div>
+                            <div><p class="card-text" style="height:3.2rem" > <b>Title</b> - ${data6[j].title}</p></div>
+                        </div>
+                    </div>
+                            <input type="button" class="btn btn-warning m-1" value="Delete" onclick="del2(${j})"></input>
+                    </div>
+                </div>`
+            }
+        }
+
+
+        document.getElementById("part3").innerHTML = sw3;
+        document.getElementById("part4").innerHTML = sw4;
+        
+
+    }
+
+    function del2(i)
+    {
+        data4 = JSON.parse(localStorage.getItem("ID-photo"));
+        document.getElementById("details_photo").style.display = "block";
+        data1 = JSON.parse(localStorage.getItem("photos"));
+        // console.log(data1)
+
+
+        let var1 = []
+        data1.map((ele, index) => {
+            if (i !== index) {
+                var1.push(ele)
+            }
+
+            // console.log(ele)
+            // console.log(index)
+        })
+        console.log(var1)
+        localStorage.setItem("photos", JSON.stringify(var1));
+        nextshow_photo(data4)
+    }
+
+</script>
+
+</html>
